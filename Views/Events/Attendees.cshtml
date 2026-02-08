@@ -1,0 +1,51 @@
+@model Assignment_1.Models.Event
+
+<h1>Attendees</h1>
+
+@if (Model == null)
+{
+    <div class="alert alert-warning">Event not found.</div>
+}
+else
+{
+    <h3>@Model.Title (@Model.Date.ToString("yyyy-MM-dd"))</h3>
+    <p><strong>Location:</strong> @Model.Location</p>
+
+    <h4>Current Attendees</h4>
+    @if (!Model.Attendees.Any())
+    {
+        <p><em>No attendees yet.</em></p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var a in Model.Attendees)
+            {
+                <li>@a.FullName (@a.Email)</li>
+            }
+        </ul>
+    }
+
+    <hr />
+
+    <h4>Add Attendee</h4>
+    <form asp-controller="Events" asp-action="Attendees" method="post">
+        <input type="hidden" name="eventId" value="@Model.Id" />
+        <div class="mb-3">
+            <label class="form-label">Full name</label>
+            <input name="newAttendee.FullName" class="form-control" />
+            <span class="text-danger">
+                @if (ViewData.ModelState.ContainsKey("FullName") && ViewData.ModelState["FullName"].Errors.Any())
+                {
+                    @ViewData.ModelState["FullName"].Errors.First().ErrorMessage
+                }
+            </span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input name="newAttendee.Email" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success">Add</button>
+        <a asp-controller="Events" asp-action="Index" class="btn btn-secondary">Back to Events</a>
+    </form>
+}

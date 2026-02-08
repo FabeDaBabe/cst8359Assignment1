@@ -1,0 +1,36 @@
+@model List<Assignment_1.Models.Event>
+
+<h1>Events</h1>
+
+@if (!Model.Any())
+{
+    <p>No events yet. Populate <code>EventStore.Events</code> to show items.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Attendees</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var ev in Model)
+        {
+            <tr>
+                <td>@ev.Title</td>
+                <td>@ev.Date.ToString("yyyy-MM-dd")</td>
+                <td>@ev.Location</td>
+                <td>@ev.Attendees.Count</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-controller="Events" asp-action="Attendees" asp-route-eventId="@ev.Id">Manage Attendees</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

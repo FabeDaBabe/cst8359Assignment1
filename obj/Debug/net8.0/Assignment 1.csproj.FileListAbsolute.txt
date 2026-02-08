@@ -1,0 +1,33 @@
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\appsettings.Development.json
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\appsettings.json
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\Assignment 1.staticwebassets.runtime.json
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\Assignment 1.staticwebassets.endpoints.json
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\Assignment 1.exe
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\Assignment 1.deps.json
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\Assignment 1.runtimeconfig.json
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\Assignment 1.dll
+C:\.Net Enterprise Apps\Assignment 1\bin\Debug\net8.0\Assignment 1.pdb
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.GeneratedMSBuildEditorConfig.editorconfig
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.AssemblyInfoInputs.cache
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.AssemblyInfo.cs
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.csproj.CoreCompileInputs.cache
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.MvcApplicationPartsAssemblyInfo.cache
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.RazorAssemblyInfo.cache
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.RazorAssemblyInfo.cs
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\scopedcss\bundle\Assignment 1.styles.css
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\scopedcss\projectbundle\Assignment 1.bundle.scp.css
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\staticwebassets.build.json
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\staticwebassets.development.json
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.dll
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\refint\Assignment 1.dll
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.pdb
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\Assignment 1.genruntimeconfig.cache
+C:\.Net Enterprise Apps\Assignment 1\obj\Debug\net8.0\ref\Assignment 1.dll
