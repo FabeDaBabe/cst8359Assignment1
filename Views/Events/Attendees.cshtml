@@ -18,12 +18,39 @@ else
     }
     else
     {
-        <ul>
-            @foreach (var a in Model.Attendees)
-            {
-                <li>@a.FullName (@a.Email)</li>
-            }
-        </ul>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var a in Model.Attendees)
+                {
+                    <tr>
+                        <td>@a.FullName</td>
+                        <td>@a.Email</td>
+                        <td>
+                            <a asp-controller="Events"
+                               asp-action="EditAttendee"
+                               asp-route-id="@a.Id"
+                               asp-route-eventId="@Model.Id"
+                               class="btn btn-warning btn-sm">Edit</a>
+
+                            <a asp-controller="Events"
+                               asp-action="DeleteAttendee"
+                               asp-route-id="@a.Id"
+                               asp-route-eventId="@Model.Id"
+                               class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
 
     <hr />

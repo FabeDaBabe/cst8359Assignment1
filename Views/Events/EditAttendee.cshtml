@@ -1,0 +1,27 @@
+﻿@model Assignment_1.Models.Attendee
+@{
+    var eventId = Context.Request.RouteValues["eventId"];
+}
+<h1>Edit Attendee</h1>
+<form asp-controller="Events"
+      asp-action="EditAttendee"
+      asp-route-id="@Model.Id"
+      asp-route-eventId="@eventId"
+      method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" name="eventId" value="@eventId" />
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-warning">Save</button>
+    <a asp-controller="Events"
+       asp-action="Attendees"
+       asp-route-eventId="@eventId"
+       class="btn btn-secondary">Cancel</a>
+</form>

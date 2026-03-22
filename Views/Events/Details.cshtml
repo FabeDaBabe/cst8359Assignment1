@@ -1,0 +1,18 @@
+﻿@model Assignment_1.Models.Event
+<h1>@Model.Title</h1>
+<p><strong>Date:</strong> @Model.Date.ToString("yyyy-MM-dd")</p>
+<p><strong>Location:</strong> @Model.Location</p>
+<p><strong>Description:</strong> @Model.Description</p>
+@if (!string.IsNullOrEmpty(Model.BannerUrl))
+{
+    <img src="@Model.BannerUrl" alt="Event Banner" style="max-width:600px;" />
+}
+<h3>Attendees (@Model.Attendees.Count)</h3>
+<ul>
+    @foreach (var a in Model.Attendees)
+    {
+        <li>@a.FullName — @a.Email</li>
+    }
+</ul>
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back</a>

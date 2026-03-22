@@ -1,0 +1,35 @@
+﻿@model Assignment_1.Models.Event
+<h1>Edit Event</h1>
+<form asp-controller="Events" asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Date" class="form-label"></label>
+        <input asp-for="Date" class="form-control" type="date" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Banner Image</label>
+        @if (!string.IsNullOrEmpty(Model.BannerUrl))
+        {
+            <div class="mb-2">
+                <img src="@Model.BannerUrl" alt="Current Banner" style="max-width:200px;" />
+                <p class="text-muted">Upload a new image to replace the current one.</p>
+            </div>
+        }
+        <input type="file" name="bannerFile" class="form-control" accept="image/*" />
+    </div>
+    <button type="submit" class="btn btn-warning">Save</button>
+    <a asp-controller="Events" asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,10 @@
+﻿@model Assignment_1.Models.Event
+<h1>Delete Event</h1>
+<p>Are you sure you want to delete <strong>@Model.Title</strong>?</p>
+<p>This will also delete <strong>@Model.Attendees.Count attendee(s)</strong>.</p>
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

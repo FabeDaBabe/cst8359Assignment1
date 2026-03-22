@@ -19,6 +19,9 @@ else
             </tr>
         </thead>
         <tbody>
+                     <tr>
+                        <a asp-action="Create" class="btn btn-success mb-3">+ Create Event</a>
+                    </tr>
         @foreach (var ev in Model)
         {
             <tr>
@@ -27,6 +30,9 @@ else
                 <td>@ev.Location</td>
                 <td>@ev.Attendees.Count</td>
                 <td>
+                    <a asp-action="Details" asp-route-id="@ev.Id" class="btn btn-info btn-sm">Details</a>
+                    <a asp-action="Edit" asp-route-id="@ev.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@ev.Id" class="btn btn-danger btn-sm">Delete</a>
                     <a class="btn btn-primary btn-sm" asp-controller="Events" asp-action="Attendees" asp-route-eventId="@ev.Id">Manage Attendees</a>
                 </td>
             </tr>
