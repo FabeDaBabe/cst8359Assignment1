@@ -1,3 +1,6 @@
+using Assignment_1.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Assignment_1
 {
     public class Program
@@ -8,6 +11,9 @@ namespace Assignment_1
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+       options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
@@ -28,7 +34,13 @@ namespace Assignment_1
 
             app.MapControllerRoute(
                 name: "default",
+
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                DbInitializer.Initialize(context);
+            }
 
             app.Run();
         }
