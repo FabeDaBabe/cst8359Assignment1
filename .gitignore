@@ -22,3 +22,6 @@ secrets.json
 .~
 project.lock.json
 .DS_Store
+Properties/PublishProfiles/
+Properties/ServiceDependencies/
+coreassignment2.zip
