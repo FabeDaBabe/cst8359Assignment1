@@ -1,0 +1,24 @@
+# Build outputs
+bin
+obj
+
+# Visual Studio
+.vs
+.user
+.suo
+
+# Publish profiles (contains your Azure secrets)
+PropertiesPublishProfiles
+PropertiesServiceDependencies
+
+# User secrets
+secrets.json
+
+# Zip files
+.zip
+
+# dotnet
+.swp
+.~
+project.lock.json
+.DS_Store
