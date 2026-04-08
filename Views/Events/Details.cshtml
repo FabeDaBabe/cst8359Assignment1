@@ -8,11 +8,19 @@
     <img src="@Model.BannerUrl" alt="Event Banner" style="max-width:600px;" />
 }
 <h3>Attendees (@Model.Attendees.Count)</h3>
-<ul>
-    @foreach (var a in Model.Attendees)
-    {
-        <li>@a.FullName — @a.Email</li>
-    }
-</ul>
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+@if (User.Identity!.IsAuthenticated)
+{
+    <ul>
+        @foreach (var a in Model.Attendees)
+        {
+            <li>@a.FullName — @a.Email</li>
+        }
+    </ul>
+}
+@if (User.IsInRole("Organizer"))
+{
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
+    <a class="btn btn-primary" asp-controller="Events" asp-action="Attendees" asp-route-eventId="@Model.Id">Manage Attendees</a>
+}
 <a asp-action="Index" class="btn btn-secondary">Back</a>

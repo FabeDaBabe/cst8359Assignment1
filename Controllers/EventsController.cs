@@ -1,18 +1,15 @@
 using Assignment_1.Data;
 using Assignment_1.Models;
 using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Assignment_1.Controllers
 {
     [Route("Events")]
     public class EventsController : Controller
     {
-
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
 
@@ -40,8 +37,8 @@ namespace Assignment_1.Controllers
             return blobClient.Uri.ToString();
         }
 
-
-        //INDEX
+        //INDEX - public
+        [AllowAnonymous]
         [Route("")]
         [Route("/")]
         public async Task<IActionResult> Index()
@@ -50,17 +47,28 @@ namespace Assignment_1.Controllers
             return View(events);
         }
 
-        //ATTENDEES
-        [Route("{eventId}/attendees")]
-        public async Task<IActionResult> Attendees(int eventId)
+        //DETAILS - any authenticated user
+        [Authorize]
+        [Route("{id}/details")]
+        public async Task<IActionResult> Details(int id)
         {
-
-            var ev = await _context.Events.Include(e =>  e.Attendees).FirstOrDefaultAsync(e => e.Id == eventId);
-
+            var ev = await _context.Events.Include(e => e.Attendees).FirstOrDefaultAsync(e => e.Id == id);
             if (ev is null) return RedirectToAction("Index");
             return View(ev);
         }
 
+        //ATTENDEES - any authenticated user can view
+        [Authorize]
+        [Route("{eventId}/attendees")]
+        public async Task<IActionResult> Attendees(int eventId)
+        {
+            var ev = await _context.Events.Include(e => e.Attendees).FirstOrDefaultAsync(e => e.Id == eventId);
+            if (ev is null) return RedirectToAction("Index");
+            return View(ev);
+        }
+
+        //ADD ATTENDEE - Organizer only
+        [Authorize(Roles = "Organizer")]
         [Route("{eventId}/attendees")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -78,29 +86,21 @@ namespace Assignment_1.Controllers
             newAttendee.Id = Guid.NewGuid().ToString();
             newAttendee.EventId = eventId;
 
-           
             _context.Attendees.Add(newAttendee);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Attendees", new { eventId });
         }
 
-        //DETAILS
-        [Route("{id}/details")]
-        public async Task<IActionResult> Details(int id)
-        {
-            var ev = await _context.Events.Include(e => e.Attendees).FirstOrDefaultAsync(e => e.Id == id);
-            if (ev is null) return RedirectToAction("Index");
-            return View(ev);
-        }
-
-        // CREATE
+        // CREATE - Organizer only
+        [Authorize(Roles = "Organizer")]
         [Route("create")]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Organizer")]
         [Route("create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -118,7 +118,8 @@ namespace Assignment_1.Controllers
             return RedirectToAction("Index");
         }
 
-        // EDIT
+        // EDIT - Organizer only
+        [Authorize(Roles = "Organizer")]
         [Route("{id}/edit")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -127,6 +128,7 @@ namespace Assignment_1.Controllers
             return View(ev);
         }
 
+        [Authorize(Roles = "Organizer")]
         [Route("{id}/edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -144,7 +146,8 @@ namespace Assignment_1.Controllers
             return RedirectToAction("Index");
         }
 
-        // DELETE
+        // DELETE - Organizer only
+        [Authorize(Roles = "Organizer")]
         [Route("{id}/delete")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -155,6 +158,7 @@ namespace Assignment_1.Controllers
             return View(ev);
         }
 
+        [Authorize(Roles = "Organizer")]
         [Route("{id}/delete")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -172,7 +176,8 @@ namespace Assignment_1.Controllers
             return RedirectToAction("Index");
         }
 
-        // EDIT ATTENDEE
+        // EDIT ATTENDEE - Organizer only
+        [Authorize(Roles = "Organizer")]
         [HttpGet]
         [Route("{eventId}/attendees/{id}/edit")]
         public async Task<IActionResult> EditAttendee(string id, int eventId)
@@ -182,6 +187,7 @@ namespace Assignment_1.Controllers
             return View(attendee);
         }
 
+        [Authorize(Roles = "Organizer")]
         [Route("{eventId}/attendees/{id}/edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -194,7 +200,8 @@ namespace Assignment_1.Controllers
             return RedirectToAction("Attendees", new { eventId });
         }
 
-        // DELETE ATTENDEE
+        // DELETE ATTENDEE - Organizer only
+        [Authorize(Roles = "Organizer")]
         [Route("{eventId}/attendees/{id}/delete")]
         public async Task<IActionResult> DeleteAttendee(string id, int eventId)
         {
@@ -203,6 +210,7 @@ namespace Assignment_1.Controllers
             return View(attendee);
         }
 
+        [Authorize(Roles = "Organizer")]
         [Route("{eventId}/attendees/{id}/delete")]
         [HttpPost, ActionName("DeleteAttendee")]
         [ValidateAntiForgeryToken]
