@@ -1,26 +1,101 @@
 ﻿@model Assignment_1.Models.Event
+@using System.Security.Claims
+
 <h1>@Model.Title</h1>
 <p><strong>Date:</strong> @Model.Date.ToString("yyyy-MM-dd")</p>
 <p><strong>Location:</strong> @Model.Location</p>
 <p><strong>Description:</strong> @Model.Description</p>
+
 @if (!string.IsNullOrEmpty(Model.BannerUrl))
 {
     <img src="@Model.BannerUrl" alt="Event Banner" style="max-width:600px;" />
 }
+
+@* Success/Error messages *@
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
 <h3>Attendees (@Model.Attendees.Count)</h3>
 @if (User.Identity!.IsAuthenticated)
 {
-    <ul>
+    <ul id="attendee-list">
         @foreach (var a in Model.Attendees)
         {
             <li>@a.FullName — @a.Email</li>
         }
     </ul>
 }
+
+@* Self-register / unregister buttons for non-organizers *@
+@if (User.Identity.IsAuthenticated && !User.IsInRole("Organizer"))
+{
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isRegistered = Model.Attendees.Any(a => a.UserId == currentUserId);
+
+    if (isRegistered)
+    {
+        <form method="post" asp-action="Unregister" asp-route-eventId="@Model.Id">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger">Unregister from Event</button>
+        </form>
+    }
+    else
+    {
+        <form method="post" asp-action="Register" asp-route-eventId="@Model.Id">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-success">Register for Event</button>
+        </form>
+    }
+}
+
 @if (User.IsInRole("Organizer"))
 {
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
     <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
     <a class="btn btn-primary" asp-controller="Events" asp-action="Attendees" asp-route-eventId="@Model.Id">Manage Attendees</a>
 }
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        const eventId = @Model.Id;
+        const isOrganizer = @(User.IsInRole("Organizer") ? "true" : "false");
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/eventHub")
+            .build();
+
+        // Live attendee count update
+        connection.on("AttendeeRegistered", (name, count) => {
+            document.querySelector("h3").textContent = `Attendees (${count})`;
+            const list = document.getElementById("attendee-list");
+            if (list) {
+                const li = document.createElement("li");
+                li.textContent = `${name}`;
+                list.appendChild(li);
+            }
+        });
+
+        // Organizer-only private notification
+        if (isOrganizer) {
+            connection.on("OrganizerNotification", (message) => {
+                const banner = document.createElement("div");
+                banner.className = "alert alert-info mt-2";
+                banner.textContent = message;
+                document.body.prepend(banner);
+            });
+        }
+
+        connection.start()
+            .then(() => connection.invoke("JoinEventGroup", eventId.toString()))
+            .catch(err => console.error("SignalR error:", err));
+    </script>
+}
+
 <a asp-action="Index" class="btn btn-secondary">Back</a>

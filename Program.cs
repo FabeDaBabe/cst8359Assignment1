@@ -1,6 +1,7 @@
 using Assignment_1.Data;
-using Microsoft.EntityFrameworkCore;
+using Assignment_1.Hubs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Assignment_1
 {
@@ -14,6 +15,8 @@ namespace Assignment_1
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddSignalR();
 
             // Add Identity
             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
@@ -41,6 +44,8 @@ namespace Assignment_1
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages(); // needed for Identity scaffold pages
+            app.MapHub<EventHub>("/eventHub");
+
 
             using (var scope = app.Services.CreateScope())
             {

@@ -3,6 +3,9 @@ using Assignment_1.Models;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Assignment_1.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 
 namespace Assignment_1.Controllers
@@ -12,11 +15,13 @@ namespace Assignment_1.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHubContext<EventHub> _hubContext; // NEW
 
-        public EventsController(AppDbContext context, IConfiguration configuration)
+        public EventsController(AppDbContext context, IConfiguration configuration, IHubContext<EventHub> hubContext)
         {
             _context = context;
             _configuration = configuration;
+            _hubContext = hubContext; 
         }
 
         //Banner Helper
@@ -113,6 +118,7 @@ namespace Assignment_1.Controllers
                 ev.BannerUrl = await UploadBannerAsync(bannerFile);
             }
 
+            ev.OrganizerUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _context.Events.Add(ev);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -223,6 +229,80 @@ namespace Assignment_1.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Attendees", new { eventId });
+        }
+
+        // SELF-REGISTER - any logged-in user
+        [Authorize]
+        [HttpPost]
+        [Route("{eventId}/register")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(int eventId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            var userName = User.Identity?.Name;
+
+            // Prevent duplicate registration
+            var already = await _context.Attendees
+                .AnyAsync(a => a.EventId == eventId && a.UserId == userId);
+
+            if (already)
+            {
+                TempData["Error"] = "You are already registered for this event.";
+                return RedirectToAction("Details", new { id = eventId });
+            }
+
+            var attendee = new Attendee
+            {
+                Id = Guid.NewGuid().ToString(),
+                EventId = eventId,
+                UserId = userId,
+                FullName = userName,
+                Email = userEmail
+            };
+
+            _context.Attendees.Add(attendee);
+            await _context.SaveChangesAsync();
+
+            // Get updated attendee count
+            var count = await _context.Attendees.CountAsync(a => a.EventId == eventId);
+
+            // Broadcast to everyone viewing this event
+            await _hubContext.Clients.Group($"event-{eventId}")
+                .SendAsync("AttendeeRegistered", userName, count);
+
+            // Private notification to the event organizer
+            var ev = await _context.Events.FindAsync(eventId);
+            if (ev?.OrganizerUserId != null)
+            {
+                await _hubContext.Clients.User(ev.OrganizerUserId)
+                    .SendAsync("OrganizerNotification", $"{userEmail} just registered for your {ev.Title}.");
+            }
+
+            TempData["Success"] = "You have successfully registered for this event!";
+            return RedirectToAction("Details", new { id = eventId });
+        }
+
+        // SELF-UNREGISTER - logged-in user removes their own registration
+        [Authorize]
+        [HttpPost]
+        [Route("{eventId}/unregister")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unregister(int eventId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var attendee = await _context.Attendees
+                .FirstOrDefaultAsync(a => a.EventId == eventId && a.UserId == userId);
+
+            if (attendee != null)
+            {
+                _context.Attendees.Remove(attendee);
+                await _context.SaveChangesAsync();
+            }
+
+            TempData["Success"] = "You have been unregistered from this event.";
+            return RedirectToAction("Details", new { id = eventId });
         }
     }
 }
